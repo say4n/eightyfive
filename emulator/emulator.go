@@ -1,17 +1,20 @@
 package emulator
 
-import "log"
+import (
+	"log"
+	"strings"
+)
 
 type eightyfive struct {
 	register map[string]uint8 // 7x 8 bit registers
 	flag     map[string]bool  // 5x 1 bit flag
-	memory   [64 * 1024]bool  // 64 Kb memory
+	memory   [64 * 1024]uint8 // 64 KB memory
 	pc       uint16           // 16 bit program counter
 	sp       uint16           // 16 bit stack pointer
 }
 
 func New() *eightyfive {
-	log.Println("eightyfive.emulator.New:init")
+	log.Println("emulator.emulator.New:init")
 	e5 := new(eightyfive)
 
 	e5.register = make(map[string]uint8)
@@ -33,34 +36,36 @@ func New() *eightyfive {
 	e5.pc = 0      // Program counter
 	e5.sp = 0xffff // Stack pointer
 
+	e5.memory[0] = 69
+
 	return e5
 }
 
 func (e5 *eightyfive) Execute(code []string) {
 	for {
-		if code[e5.pc] == "HLT" {
-			log.Printf("eightyfive.emulator.Execute:HLT, PC=%d\n", e5.pc)
+		line := code[e5.pc]
+		if line == "HLT" {
+			log.Printf("emulator.emulator.Execute:HLT, PC=%d\n", e5.pc)
 			break
-		} else if code[e5.pc] == "NOP" {
-			log.Printf("eightyfive.emulator.Execute:NOP, PC=%d\n", e5.pc)
+		} else if line == "NOP" {
+			log.Printf("emulator.emulator.Execute:NOP, PC=%d\n", e5.pc)
 			e5.pc++
+		} else if strings.HasPrefix(line, "MOV") {
+			e5.handleMOV(line)
 		} else {
-			log.Printf("eightyfive.emulator.Execute:PC=%d\n", e5.pc)
+			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}
 	}
 }
 
 func (e5 *eightyfive) DumpMemory() {
-	var bitset int8
-	for address, bit := range e5.memory {
-		if (address+1)%8 == 0 {
-			log.Printf("eightyfive.emulator.DumpMemory:%04x: %02x", address-7, bitset)
-			bitset = 0
-		}
-		if bit {
-			bitset |= 1
-		}
+	for address, membyte := range e5.memory {
+		log.Printf("emulator.emulator.DumpMemory:%04x: %02x", address, membyte)
+	}
+}
 
-		bitset <<= 1
+func (e5 *eightyfive) DumpRegister() {
+	for register, content := range e5.register {
+		log.Printf("emulator.emulator.DumpRegister:%s: %02x", register, content)
 	}
 }
