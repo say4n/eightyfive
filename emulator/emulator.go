@@ -36,7 +36,7 @@ func New() *eightyfive {
 	e5.pc = 0      // Program counter
 	e5.sp = 0xffff // Stack pointer
 
-	e5.memory[0] = 69
+	e5.register["H"] = 55
 
 	return e5
 }
@@ -60,6 +60,10 @@ func (e5 *eightyfive) Execute(code []string) {
 			e5.handleLDA(line)
 		} else if strings.HasPrefix(line, "STA") {
 			e5.handleSTA(line)
+		} else if strings.HasPrefix(line, "LHLD") {
+			e5.handleLHLD(line)
+		} else if strings.HasPrefix(line, "SHLD") {
+			e5.handleSHLD(line)
 		} else {
 			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}
