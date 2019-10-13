@@ -56,6 +56,10 @@ func (e5 *eightyfive) Execute(code []string) {
 			e5.handleMVI(line)
 		} else if strings.HasPrefix(line, "LXI") {
 			e5.handleLXI(line)
+		} else if strings.HasPrefix(line, "LDA") {
+			e5.handleLDA(line)
+		} else if strings.HasPrefix(line, "STA") {
+			e5.handleSTA(line)
 		} else {
 			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}

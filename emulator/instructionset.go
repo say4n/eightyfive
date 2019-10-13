@@ -115,3 +115,39 @@ func (e5 *eightyfive) handleLXI(instruction string) {
 
 	e5.pc++
 }
+
+func (e5 *eightyfive) handleLDA(instruction string) {
+	// LDA addr
+	contents := strings.Split(instruction, " ")
+	addressbytes, err := hex.DecodeString(contents[1])
+	if err != nil {
+		panic(err)
+	}
+	addressL := uint16(addressbytes[0])
+	addressH := uint16(addressbytes[1])
+	address := addressH<<8 + addressL
+	log.Printf("emulator.instructionset.handleLDA:address: %04x", address)
+	log.Printf("emulator.instructionset.handleLDA:data: %02x", e5.memory[address])
+
+	e5.register["A"] = e5.memory[address]
+
+	e5.pc++
+}
+
+func (e5 *eightyfive) handleSTA(instruction string) {
+	// STA addr
+	contents := strings.Split(instruction, " ")
+	addressbytes, err := hex.DecodeString(contents[1])
+	if err != nil {
+		panic(err)
+	}
+	addressL := uint16(addressbytes[0])
+	addressH := uint16(addressbytes[1])
+	address := addressH<<8 + addressL
+	log.Printf("emulator.instructionset.handleSTA:address: %04x", address)
+	log.Printf("emulator.instructionset.handleSTA:data: %02x", e5.register["A"])
+
+	e5.memory[address] = e5.register["A"]
+
+	e5.pc++
+}
