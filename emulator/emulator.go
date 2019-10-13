@@ -36,8 +36,6 @@ func New() *eightyfive {
 	e5.pc = 0      // Program counter
 	e5.sp = 0xffff // Stack pointer
 
-	e5.memory[0xffff] = 0xe9
-
 	return e5
 }
 
