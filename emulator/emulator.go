@@ -52,6 +52,8 @@ func (e5 *eightyfive) Execute(code []string) {
 			e5.pc++
 		} else if strings.HasPrefix(line, "MOV") {
 			e5.handleMOV(line)
+		} else if strings.HasPrefix(line, "MVI") {
+			e5.handleMVI(line)
 		} else {
 			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}
