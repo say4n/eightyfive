@@ -38,6 +38,7 @@ func New() *eightyfive {
 
 	e5.register["B"] = 0x20
 	e5.register["C"] = 0xef
+	e5.register["D"] = 0x01
 
 	return e5
 }
@@ -71,6 +72,8 @@ func (e5 *eightyfive) Execute(code []string) {
 			e5.handleSTAX(line)
 		} else if strings.HasPrefix(line, "ADD ") {
 			e5.handleADD(line)
+		} else if strings.HasPrefix(line, "ADC ") {
+			e5.handleADC(line)
 		} else {
 			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}

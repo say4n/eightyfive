@@ -54,3 +54,57 @@ func (e5 *eightyfive) handleADD(instruction string) {
 
 	e5.pc++
 }
+
+func (e5 *eightyfive) handleADC(instruction string) {
+	contents := strings.Split(instruction, " ")
+	operand := contents[1]
+
+	if operand == "M" {
+		// ADC m
+		log.Println("emulator.instructionset.handleADC:ADC m")
+		addressL := uint16(e5.register["L"])
+		addressH := uint16(e5.register["H"])
+		address := addressH<<8 + addressL
+
+		log.Printf("emulator.instructionset.handleADC:address: %04x", address)
+		log.Printf("emulator.instructionset.handleADC:content: %02x", e5.memory[address])
+		log.Printf("emulator.instructionset.handleADC:A: %02x", e5.register["A"])
+
+		var carry uint8
+		if e5.flag["CY"] {
+			carry = 1
+		} else {
+			carry = 0
+		}
+
+		sum := uint8(e5.register["A"] + e5.memory[address] + carry)
+		e5.flag["CY"] = math.MaxInt8-e5.register["A"]-carry < e5.memory[address]
+
+		log.Printf("emulator.instructionset.handleADC:sum: %02x", sum)
+		e5.register["A"] = sum
+
+	} else {
+		// ADC r
+		log.Printf("emulator.instructionset.handleADD:ADC %s", operand)
+
+		log.Printf("emulator.instructionset.handleADC:A: %02x", e5.register["A"])
+		log.Printf("emulator.instructionset.handleADC:%s: %02x", operand, e5.register[operand])
+
+		var carry uint8
+		if e5.flag["CY"] {
+			carry = 1
+		} else {
+			carry = 0
+		}
+
+		sum := uint8(e5.register["A"] + e5.register[operand] + carry)
+		e5.flag["CY"] = math.MaxUint8-e5.register["A"]-carry < e5.register[operand]
+
+		log.Printf("emulator.instructionset.handleADC:sum: %02x", sum)
+		e5.register["A"] = sum
+	}
+
+	e5.updateFlags()
+
+	e5.pc++
+}
