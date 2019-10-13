@@ -2,6 +2,7 @@ package emulator
 
 import (
 	"encoding/hex"
+	"fmt"
 	"log"
 	"strings"
 )
@@ -73,6 +74,43 @@ func (e5 *eightyfive) handleMVI(instruction string) {
 		log.Println("emulator.instructionset.handleMVI:MVI r, data_8")
 		log.Printf("emulator.instructionset.handleMVI:target: %s", target)
 		e5.register[target] = data_8
+	}
+
+	e5.pc++
+}
+
+func (e5 *eightyfive) handleLXI(instruction string) {
+	contents := strings.Split(instruction, " ")
+	register_pair := contents[1]
+	data, err := hex.DecodeString(contents[2])
+	if err != nil {
+		panic(err)
+	}
+	log.Printf("emulator.instructionset.handleLXI:data: %d", data)
+	lobyte := uint8(data[0])
+	hibyte := uint8(data[1])
+	log.Printf("emulator.instructionset.handleLXI:data: %02x %02x", lobyte, hibyte)
+
+	if register_pair == "B" {
+		// LXI rp, data_16
+		log.Printf("emulator.instructionset.handleLXI:BC")
+		e5.register["B"] = lobyte
+		e5.register["C"] = hibyte
+
+	} else if register_pair == "D" {
+		// LXI rp, data_16
+		log.Printf("emulator.instructionset.handleLXI:DE")
+		e5.register["D"] = lobyte
+		e5.register["E"] = hibyte
+
+	} else if register_pair == "H" {
+		// LXI rp, data_16
+		log.Printf("emulator.instructionset.handleLXI:HL")
+		e5.register["H"] = lobyte
+		e5.register["L"] = hibyte
+
+	} else {
+		panic(fmt.Sprintf("Invalid register pair '%s' for LXI", register_pair))
 	}
 
 	e5.pc++
