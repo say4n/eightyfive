@@ -36,7 +36,7 @@ func New() *eightyfive {
 	e5.pc = 0      // Program counter
 	e5.sp = 0xffff // Stack pointer
 
-	e5.register["H"] = 55
+	e5.memory[0xffff] = 0xe9
 
 	return e5
 }
@@ -50,20 +50,24 @@ func (e5 *eightyfive) Execute(code []string) {
 		} else if line == "NOP" {
 			log.Printf("emulator.emulator.Execute:NOP, PC=%d\n", e5.pc)
 			e5.pc++
-		} else if strings.HasPrefix(line, "MOV") {
+		} else if strings.HasPrefix(line, "MOV ") {
 			e5.handleMOV(line)
-		} else if strings.HasPrefix(line, "MVI") {
+		} else if strings.HasPrefix(line, "MVI ") {
 			e5.handleMVI(line)
-		} else if strings.HasPrefix(line, "LXI") {
+		} else if strings.HasPrefix(line, "LXI ") {
 			e5.handleLXI(line)
-		} else if strings.HasPrefix(line, "LDA") {
+		} else if strings.HasPrefix(line, "LDA ") {
 			e5.handleLDA(line)
-		} else if strings.HasPrefix(line, "STA") {
+		} else if strings.HasPrefix(line, "STA ") {
 			e5.handleSTA(line)
-		} else if strings.HasPrefix(line, "LHLD") {
+		} else if strings.HasPrefix(line, "LHLD ") {
 			e5.handleLHLD(line)
-		} else if strings.HasPrefix(line, "SHLD") {
+		} else if strings.HasPrefix(line, "SHLD ") {
 			e5.handleSHLD(line)
+		} else if strings.HasPrefix(line, "LDAX ") {
+			e5.handleLDAX(line)
+		} else if strings.HasPrefix(line, "STAX ") {
+			e5.handleSTAX(line)
 		} else {
 			log.Printf("emulator.emulator.Execute:PC=%d\n", e5.pc)
 		}

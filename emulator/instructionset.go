@@ -189,3 +189,63 @@ func (e5 *eightyfive) handleSHLD(instruction string) {
 
 	e5.pc++
 }
+
+func (e5 *eightyfive) handleLDAX(instruction string) {
+	// LDAX rp
+	contents := strings.Split(instruction, " ")
+	register_pair := contents[1]
+
+	if register_pair == "B" {
+		addressL := uint16(e5.register["C"])
+		addressH := uint16(e5.register["B"])
+		address := addressH<<8 + addressL
+		log.Printf("emulator.instructionset.handleLDAX:address: %04x", address)
+		log.Printf("emulator.instructionset.handleLDAX:data: %02x", e5.memory[address])
+
+		e5.register["A"] = e5.memory[address]
+
+	} else if register_pair == "D" {
+		addressL := uint16(e5.register["E"])
+		addressH := uint16(e5.register["D"])
+		address := addressH<<8 + addressL
+		log.Printf("emulator.instructionset.handleLDAX:address: %04x", address)
+		log.Printf("emulator.instructionset.handleLDAX:data: %02x", e5.memory[address])
+
+		e5.register["A"] = e5.memory[address]
+
+	} else {
+		panic(fmt.Sprintf("Invalid register pair '%s' for LDAX", register_pair))
+	}
+
+	e5.pc++
+}
+
+func (e5 *eightyfive) handleSTAX(instruction string) {
+	// STAX rp
+	contents := strings.Split(instruction, " ")
+	register_pair := contents[1]
+
+	if register_pair == "B" {
+		addressL := uint16(e5.register["C"])
+		addressH := uint16(e5.register["B"])
+		address := addressH<<8 + addressL
+		log.Printf("emulator.instructionset.handleSTAX:address: %04x", address)
+		log.Printf("emulator.instructionset.handleSTAX:data: %02x", e5.register["A"])
+
+		e5.memory[address] = e5.register["A"]
+
+	} else if register_pair == "D" {
+		addressL := uint16(e5.register["E"])
+		addressH := uint16(e5.register["D"])
+		address := addressH<<8 + addressL
+		log.Printf("emulator.instructionset.handleSTAX:address: %04x", address)
+		log.Printf("emulator.instructionset.handleSTAX:data: %02x", e5.register["A"])
+
+		e5.memory[address] = e5.register["A"]
+
+	} else {
+		panic(fmt.Sprintf("Invalid register pair '%s' for STAX", register_pair))
+	}
+
+	e5.pc++
+}
